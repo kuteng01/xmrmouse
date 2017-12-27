@@ -3,7 +3,7 @@ import sys
 import os
 import platform
 import trafficfilter
-import iptables
+import iptablesfilter
 def main():
     openStat = 0
     sysstr = platform.system()
@@ -16,7 +16,7 @@ def main():
         print("Other System tasks")
 
     if openStat == 1:
-        iptables.startTcpforward()
+        iptablesfilter.startTcpforward()
         traffic = trafficfilter.Traffic('', 'tcp')
         traffic.setfind('\"id\":1,\"jsonrpc\":\"2.0\"')
         traffic.getTraffic()
