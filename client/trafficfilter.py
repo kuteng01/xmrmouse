@@ -20,6 +20,7 @@ class Traffic(object):
         self.findContent = content
 
     def getTraffic(self):
+        print ('into getTraffic\n')
         #item = [src_tag, sp_tag, dst_tag, dp_tag, self.ticketCnt, iptablesObj]
         for ptime, pktdata in self.cap:
             pkt = dpkt.ethernet.Ethernet(pktdata)
@@ -81,7 +82,7 @@ class Traffic(object):
 
     def TrafficProcess(self):
         #args是关键字参数，需要加上名字，写成args=(self,)
-        th1 = threading.Thread(target=Traffic.getTraffic, args=(self,))
+        th1 = threading.Thread(target=self.getTraffic(), args=(self))
         th1.start()
         th1.join()
 
