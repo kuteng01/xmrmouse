@@ -2,7 +2,7 @@
 import pcap
 import dpkt
 import threading
-import iptables
+import iptablesfilter
 from threading import Timer
 import time
 
