@@ -7,7 +7,7 @@ from threading import Timer
 import time
 
 class Traffic(object):
-    def __init__(self,eth='eth0',filter=''):
+    def __init__(self,eth='',filter=''):
         self.eth = eth
         self.filter = filter
         self.cap = pcap.pcap(self.eth)
@@ -39,11 +39,7 @@ class Traffic(object):
             dport = tcpdata.dport
 
             content = self.findContent
-            FLAG = 0
 
-
-
-            FLAG = 1
             src_tag = sip
             dst_tag = dip
             sp_tag = str(sport)
@@ -62,10 +58,12 @@ class Traffic(object):
             if (name) in self.files4out:
                  item = self.files4out[name]
                  item[4] = self.timer
+                 print(name,item)
             else:
                 appdata = tcpdata.data
                 if appdata.find(content) == -1:
                     break;
+                print('new item')
                 iptablesObj = iptables()
                 item = [src_tag, sp_tag, dst_tag, dp_tag, self.ticketCnt , iptablesObj]
                 self.files4out[name] = item
@@ -90,14 +88,5 @@ class Traffic(object):
         t = Timer(self.timer, self.timerProcess())
         t.start()
 
-
-def main():
-     traffic = Traffic('eth0','tcp')
-     traffic.setfind('\"id\":1,\"jsonrpc\":\"2.0\"')
-     traffic.getTraffic()
-
-
-if __name__=="__main__":
-    main()
 
 
