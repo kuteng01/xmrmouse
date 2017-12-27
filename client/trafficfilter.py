@@ -64,7 +64,7 @@ class Traffic(object):
                 if appdata.find(content) == -1:
                     break;
                 print('new item')
-                iptablesObj = iptables()
+                iptablesObj = iptablesfilter()
                 item = [src_tag, sp_tag, dst_tag, dp_tag, self.ticketCnt , iptablesObj]
                 self.files4out[name] = item
 

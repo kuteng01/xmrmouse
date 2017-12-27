@@ -3,7 +3,7 @@ import sys
 import os
 import subprocess
 import config
-class iptables(object):
+class iptablesfilter(object):
     def __init__(self,eth='eth0',oldip='',oldp = ''):
         self.stat = 'down'
         self.myruleList = []
