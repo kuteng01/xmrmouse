@@ -55,6 +55,7 @@ class Traffic(object):
                 dp_tag = temp
 
             name = src_tag + '_' + sp_tag + '_' + dst_tag + '_' + dp_tag
+		print("%s\n" %name)
             if (name) in self.files4out:
                  item = self.files4out[name]
                  item[4] = self.timer
