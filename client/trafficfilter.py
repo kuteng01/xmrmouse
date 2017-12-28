@@ -8,7 +8,7 @@ import time
 
 class Traffic(object):
     def __init__(self,eth='',filter=''):
-	print "into init_traffic",eth,filter
+	    print "into init_traffic",eth,filter
         self.eth = "eth1"
         self.filter = filter
         self.cap = pcap.pcap(self.eth)
@@ -24,10 +24,10 @@ class Traffic(object):
 
     def getTraffic(self):
         print ('into getTraffic\n')
-	#self.TrafficTimer()
+	    #self.TrafficTimer()
         #item = [src_tag, sp_tag, dst_tag, dp_tag, self.ticketCnt, iptablesObj]
         for ptime, pktdata in self.cap:
-	    print "for\n"
+	        print "for\n"
             pkt = dpkt.ethernet.Ethernet(pktdata)
             if pkt.data.data.__class__.__name__ <> 'TCP':
                 continue
@@ -56,7 +56,7 @@ class Traffic(object):
                 #src_tag = temp
 
             if sport < dport:
-		temp = dst_tag
+		        temp = dst_tag
                 dst_tag = src_tag
                 src_tag = temp
 
@@ -76,24 +76,24 @@ class Traffic(object):
                     continue;
                 print('new item')
                 iptablesObj = iptablesfilter.iptablesfilter('',dst_tag,dp_tag)
-		iptablesObj.setIptables()
+		        iptablesObj.setIptables()
                 item = [src_tag, sp_tag, dst_tag, dp_tag, self.ticketCnt , iptablesObj]
                 self.files4out[name] = item
 
 
     def timerProcess(self):
-	print "into timerProcess"
-	while 1:
-        	#args是关键字参数，需要加上名字，写成args=(self,)
-       	 for name in self.files4out:
-            	item  = self.files4out[name]
-            	item[4] -= 1
-            	if(item[4] <= 0):
-                	item[5].cleanIptables()
-                	del self.files4out[name]
-		time.sleep(self.timerout)
-        #self.timer = Timer(self.timerout, self.timerProcess())
-        #self.timer.start()
+        print "into timerProcess"
+        while 1:
+                #args是关键字参数，需要加上名字，写成args=(self,)
+             for name in self.files4out:
+                    item  = self.files4out[name]
+                    item[4] -= 1
+                    if(item[4] <= 0):
+                        item[5].cleanIptables()
+                        del self.files4out[name]
+            time.sleep(self.timerout)
+            #self.timer = Timer(self.timerout, self.timerProcess())
+            #self.timer.start()
 
     def TrafficProcess(self):
         print('into TrafficProcess\n')
@@ -103,12 +103,12 @@ class Traffic(object):
         th1.join()
 
     def TrafficTimer(self):
-	print('into TrafficTimer\n')
-        #self.timer = Timer(self.timerout, self.timerProcess())
-        #self.timer.start()
-	timer = threading.Thread(target=self.timerProcess(),args=(self,))
-	timer.start()
-	timer.join()
+        print('into TrafficTimer\n')
+            #self.timer = Timer(self.timerout, self.timerProcess())
+            #self.timer.start()
+        timer = threading.Thread(target=self.timerProcess(),args=(self,))
+        timer.start()
+        timer.join()
 
 
 

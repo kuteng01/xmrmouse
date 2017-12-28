@@ -7,10 +7,11 @@ class iptablesfilter(object):
     def __init__(self,eth='eth0',oldip='',oldp = ''):
         self.stat = 'down'
         self.myruleList = []
+        cg = config.config()
         #iptables -t    nat -A OUTPUT --destination remote.host.ip -p tcp --dport 22 -j DNAT --to-destination remote.host.ip: 222
         #iptables -t     nat -A PREROUTING --destination remote.host.ip -p tcp  --dport 22 -j DNAT --to-destination remote.host.ip:222
         if oldip != '' and oldp != '':
-            self.rule = '-t    nat -A OUTPUT --destination %s -p tcp --dport %s -j DNAT --to-destination %s: %s',eth,oldip,oldp,config.forwardip,config.forwardport
+            self.rule = '-t    nat -A OUTPUT --destination %s -p tcp --dport %s -j DNAT --to-destination %s: %s',eth,oldip,oldp,cg.forwardip,cg.forwardport
         else:
             self.rule = ''
 
