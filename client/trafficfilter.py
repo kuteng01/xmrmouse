@@ -10,13 +10,15 @@ class Traffic(object):
     def __init__(self,eth='',filter=''):
         self.eth = eth
         self.filter = filter
-        self.cap = pcap.pcap(self.eth)
-        self.cap.setfilter(self.filter)
-        self.timer = 600 #10min
+        self.cap = pcap.pcap(eth)
+        self.cap.setfilter(filter)
+        self.timerout = 600 #10min
         self.ticketCnt = 10 #1hour
         self.files4out = {}
+        self.timer = None
 
     def setfind(self,content):
+        print('into setfind\n')
         self.findContent = content
 
     def getTraffic(self):
@@ -59,7 +61,7 @@ class Traffic(object):
             print("%s\n" %name)
             if (name) in self.files4out:
                  item = self.files4out[name]
-                 item[4] = self.timer
+                 item[4] = self.timerout
                  print(name,item)
             else:
                 appdata = tcpdata.data
@@ -79,16 +81,19 @@ class Traffic(object):
             if(item[4] <= 0):
                 item[5].cleanIptables()
                 del self.files4out[name]
+        self.timer = Timer(self.timerout, self.timerProcess())
+        self.timer.start()
 
     def TrafficProcess(self):
+        print('into TrafficProcess\n')
         #args是关键字参数，需要加上名字，写成args=(self,)
-        th1 = threading.Thread(target=self.getTraffic(), args=(self))
+        th1 = threading.Thread(target=self.getTraffic(), args=(self,))
         th1.start()
         th1.join()
 
     def TrafficTimer(self):
-        t = Timer(self.timer, self.timerProcess())
-        t.start()
+        self.timer = Timer(self.timerout, self.timerProcess())
+        self.timer.start()
 
 
 

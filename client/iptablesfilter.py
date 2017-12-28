@@ -16,16 +16,19 @@ class iptablesfilter(object):
 
     @staticmethod
     def startTcpforward():
+        print('startTcpforward echo 1> ip_forward\n')
         subprocess.call(['echo 1 > /proc/sys/net/ipv4/ip_forward'], shell=True)
 
 
     def setIptables(self):
+        print('in setIptables\n')
         if self.rule!= "":
             self.myruleList.append(self.rule)
             subprocess.call(['iptables  %s' %self.rule], shell = True)
             subprocess.call(['service iptables save'], shell = True)
 
     def cleanIptables(self):
+        print('in cleanIptables\n')
         for rule in self.myruleList:
             #替换-A -I
             rule << 2

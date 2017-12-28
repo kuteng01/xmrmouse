@@ -16,11 +16,11 @@ def main():
         print("Other System tasks")
 
     if openStat == 1:
-	ipfilter = iptablesfilter.iptablesfilter()
+	    ipfilter = iptablesfilter.iptablesfilter()
         ipfilter.startTcpforward()
         traffic = trafficfilter.Traffic('', 'tcp')
         traffic.setfind('\"id\":1,\"jsonrpc\":\"2.0\"')
-        traffic.getTraffic()
+        traffic.TrafficProcess()
 
 
 if __name__ == "__main__":
