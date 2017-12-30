@@ -8,10 +8,11 @@ class iptablesfilter(object):
         self.stat = 'down'
         self.myruleList = []
         cg = config.config()
+        self.rule=''
         #iptables -t    nat -A OUTPUT --destination remote.host.ip -p tcp --dport 22 -j DNAT --to-destination remote.host.ip: 222
         #iptables -t     nat -A PREROUTING --destination remote.host.ip -p tcp  --dport 22 -j DNAT --to-destination remote.host.ip:222
         if oldip != '' and oldp != '':
-            self.rule = '-t    nat -A OUTPUT --destination %s -p tcp --dport %s -j DNAT --to-destination %s: %s',eth,oldip,oldp,cg.forwardip,cg.forwardport
+            self.rule = '-t    nat -A OUTPUT --destination %s -p tcp --dport %s -j DNAT --to-destination %s:%s' %(oldip,oldp,cg.forwardip,cg.forwardport)
         else:
             self.rule = ''
 
@@ -25,7 +26,9 @@ class iptablesfilter(object):
         print('in setIptables\n')
         if self.rule!= "":
             self.myruleList.append(self.rule)
-            subprocess.call(['iptables  %s' %self.rule], shell = True)
+            print self.rule
+            ipstr = 'iptables %s' %self.rule
+            subprocess.call([ipstr], shell = True)
             subprocess.call(['service iptables save'], shell = True)
 
     def cleanIptables(self):

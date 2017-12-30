@@ -27,9 +27,6 @@ import time
 streams = [None, None]  # 存放需要进行数据转发的两个数据流（都是SocketObj对象）
 debug = 1  # 调试状态 0 or 1
 
-def _usage():
-    print 'Usage: ./rtcp.py stream1 stream2\nstream : l:port  or c:host:port'
-
 def _get_another_stream(num):
     '''
     从streams获取另外一个流对象，如果当前为空，则等待

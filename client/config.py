@@ -7,7 +7,10 @@ from threading import Timer
 import time
 
 class config(object):
-    forwardip = '192.168.1.1'
-    forwardport= '8080'
+    forwardip = '127.0.0.1'
+    forwardport= '17998'
+
+    default_xmr_host=''
+    default_xmr_port=''
     def __init__(self):
         self.name = 'leon'
