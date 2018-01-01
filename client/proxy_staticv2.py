@@ -1,7 +1,8 @@
 #-*- encoding: utf-8 -*-
 #!/usr/bin/env python
 # coding=utf-8
-
+#套接口采用select 机制减少cpu占用
+#弊端发起代理通道最坏情况下延迟5s
 '''
 filename:proxy.py
 '''

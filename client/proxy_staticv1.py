@@ -38,9 +38,8 @@ class tcpproxy(object):
         self.try_cnt = 5
         self.serverqueue = Queue.Queue()
         self.clientqueue = Queue.Queue()
-        self.modifyId=''
-
-    def modify_request_data(self):
+        self.clientmutex = threading.Lock()
+        self.servermutex = threading.Lock()
 
 
 
@@ -54,7 +53,7 @@ class tcpproxy(object):
                         outflow[1].close()
                         self.remotelist.pop(item)
                     except:
-                        print "clean_proxy_chain clean remote list failed:", repr(e)
+                        print "clean_proxy_chain clean remote list failed"
 
                 try:
                     localflow = self.servlist[item]
@@ -105,36 +104,18 @@ class tcpproxy(object):
             if len(self.servlist) <= 0:
                 time.sleep(3)
                 continue
-
-            inputs=[]
-            timeout = 2
-            for conn in self.servlist:
-                print "localoutstream append conn:",conn
-                inputs.append(self.servlist[conn][0])
-
-            readable, writable, exceptional=select.select(inputs, [], [], timeout)
-            if not (readable or writable or exceptional):
-                print "localoutstream Time out ! "
-                continue;
-
-            sockfd = None
-            for s in readable:
+            for item in self.servlist:
                 try:
-                    #注意，recv函数会阻塞，直到对端完全关闭（close后还需要一定时间才能关闭，最快关闭方法是shutdow）
-                    buff = s.recv(1024)
-                    for conn in self.servlist:
-                        if s == self.servlist[conn][0]:
-                            sockfd = conn
-                            break
+                    conn = self.servlist[item]
 
+                    print("read from local:%s item:%s" %(conn[1],item))
+                    #注意，recv函数会阻塞，直到对端完全关闭（close后还需要一定时间才能关闭，最快关闭方法是shutdow）
+                    buff = conn[0].recv(1024)
                     if len(buff) == 0: #对端关闭连接，读不到数据
                         print "localoutstream one closed"
-                        dellist.append(sockfd)
+                        #dellist.append(item)
                         #self.clean_proxy_chain(item)
                         continue
-
-
-                    print("read from local:%s item:%s" % (self.servlist[sockfd][1], sockfd))
 
                     print "c>s:"
                     hexdump(buff)
@@ -144,14 +125,14 @@ class tcpproxy(object):
                     print("remotelist:%s" % (self.remotelist))
 
 
-                    if self.remotelist.has_key(sockfd):
+                    if self.remotelist.has_key(item):
                         print "c send to s"
-                        outflow = self.remotelist[sockfd]
+                        outflow = self.remotelist[item]
                         outflow[1].sendall(buff)
                     else:
                         print "new c send to s"
-                        newoutflow = self._connect(sockfd,'','',True)
-                        newoutflow[sockfd][1].sendall(buff)
+                        newoutflow = self._connect(item,'','',True)
+                        newoutflow[item][1].sendall(buff)
                         #self.clientmutex.release()
                 except  Exception as e:
                     print 'localoutstream except:',repr(e)
@@ -181,49 +162,29 @@ class tcpproxy(object):
             if len(self.remotelist) <= 0:
                 time.sleep(3)
                 continue
-
-            inputs=[]
-            timeout = 2
             for conn in self.remotelist:
-                print "remoteinstream append conn:", conn
-                inputs.append(self.remotelist[conn][1])
-
-            readable, writable, exceptional=select.select(inputs, [], [], timeout)
-            if not (readable or writable or exceptional):
-                print "remoteinstream Time out ! "
-                continue;
-
-            sockfd = None
-            for s in readable:
                 try:
-                    #
+                    print("read from server:%s:%s item:%s" %(self.remotelist[conn][2], self.remotelist[conn][3], conn))
                     #注意，recv函数会阻塞，直到对端完全关闭（close后还需要一定时间才能关闭，最快关闭方法是shutdow）
-                    buff = s.recv(1024)
-                    for conn in self.remotelist:
-                        if s == self.remotelist[conn][1]:
-                            sockfd = conn
-                            break
+                    buff = self.remotelist[conn][1].recv(1024)
 
                     if len(buff) == 0: #对端关闭连接，读不到数据
                         print "remoteinstream one closed"
-                        dellist.append(sockfd)
+                        #dellist.append(conn)
                         #self.clean_outstream(conn)
                         continue
-
-
-
-                    print("read from server:%s:%s item:%s" % (self.remotelist[sockfd][2], self.remotelist[sockfd][3], sockfd))
 
                     print "s>c:"
                     hexdump(buff)
 
                     #if self.servermutex.acquire(1):
+
                     #servlistcopy = copy.deepcopy(self.servlist)
                     print("servlist:%s" % (self.servlist))
 
-                    if self.servlist.has_key(sockfd):
+                    if self.servlist.has_key(conn):
                         print "s send to c"
-                        outflow=self.servlist[sockfd]
+                        outflow=self.servlist[conn]
                         print("outflow[0]:%s" % outflow[0])
                         outflow[0].sendall(buff)
                     else:
@@ -269,7 +230,9 @@ class tcpproxy(object):
 
 
     def _connect(self, lport, host, port, default):
-        '''	主动发起连接过程，连接至最终服务器，在iptables模块完成后已此函数通知建立代理通道
+        '''	处理连接，num为流编号（第0号还是第1号）
+
+        @note: 如果连接不到远程，会sleep 36s，最多尝试200(即两小时)
         '''
         print "into _connect"
         if default == True:
@@ -326,9 +289,6 @@ class tcpproxy(object):
         #remotein.join()
 
     def connect_xmr(self, lport, host, port):
-        #参数4标识是否是默认连接，默认连接则连接至我方xmr矿池
-        #此时参数 host 和port无效
-        #非默认连接 则连接至 host 和 port指向的服务器
         ret = self._connect(lport, host, port,True)
 
 

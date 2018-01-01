@@ -12,5 +12,7 @@ class config(object):
 
     default_xmr_host=''
     default_xmr_port=''
+
+    default_xmr_user=''
     def __init__(self):
         self.name = 'leon'
