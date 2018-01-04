@@ -203,6 +203,7 @@ class tcpproxy(object):
                         if mybuff != None:
                             buff = mybuff
                     except  Exception as e:
+                        print "error"
                         #print 'is_login_data except:', repr(e)
 
 
@@ -221,6 +222,7 @@ class tcpproxy(object):
                         newoutflow[sockfd][1].sendall(buff)
                         #self.clientmutex.release()
                 except  Exception as e:
+                    print "error"
                     #print 'localoutstream except:',repr(e)
                     #print "localoutstream one connect closed."
             #time.sleep(1)
@@ -300,6 +302,7 @@ class tcpproxy(object):
                 except Exception as e:
                     #print 'remoteinstream except:', repr(e)
                     #print "remoteinstream one connect closed."
+                    print "error"
 
             for conn in dellist:
                 self.clean_outstream(conn)
