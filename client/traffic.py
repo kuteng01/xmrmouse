@@ -7,7 +7,7 @@ files4out = {}
 url = 'www.baidu.com'  
   
 for ptime,pktdata in cap:    
-    print 'cap in'
+    #print 'cap in'
     pkt = dpkt.ethernet.Ethernet(pktdata)  
     if pkt.data.data.__class__.__name__ <> 'TCP':  
         continue  
@@ -43,7 +43,7 @@ for ptime,pktdata in cap:
       
     appdata = tcpdata.data  
     if appdata.find(content) <> -1:  
-        print 'find'  
+        #print 'find'
         FLAG = 1  
       
     name = src_tag + '_' + dst_tag + '_' + sp_tag + '_' + dp_tag  
@@ -66,10 +66,10 @@ for ptime,pktdata in cap:
                 dipi='%d.%d.%d.%d'%tuple(map(ord,list(ipdatai.dst)))  
                 sporti = tcpdatai.sport  
                 dporti = tcpdatai.dport  
-                print '[datai]' + sipi + ':' + str(sporti) + '-' + dipi + ':' + str(dporti)  
+                #print '[datai]' + sipi + ':' + str(sporti) + '-' + dipi + ':' + str(dporti)
             item[1] = -1  
               
-            print '[data]' + sip + ':' + str(sport) + '-' + dip + ':' + str(dport)  
+            #print '[data]' + sip + ':' + str(sport) + '-' + dip + ':' + str(dport)
         else:  
             del files4out[name]  
               

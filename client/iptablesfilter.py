@@ -3,6 +3,7 @@ import sys
 import os
 import subprocess
 import config
+import time
 class iptablesfilter(object):
     def __init__(self,eth='eth0',oldip='',oldp = ''):
         self.stat = 'down'
@@ -18,21 +19,24 @@ class iptablesfilter(object):
 
     @staticmethod
     def startTcpforward():
-        print('startTcpforward echo 1> ip_forward\n')
+        #print('startTcpforward echo 1> ip_forward\n')
         subprocess.call(['echo 1 > /proc/sys/net/ipv4/ip_forward'], shell=True)
+        subprocess.call(['service iptables start'], shell=True)
+        time.sleep(2)
+        subprocess.call(['iptables -t nat -F'], shell=True)
 
 
     def setIptables(self):
-        print('in setIptables\n')
+        #print('in setIptables\n')
         if self.rule!= "":
             self.myruleList.append(self.rule)
-            print self.rule
+            #print self.rule
             ipstr = 'iptables %s' %self.rule
             subprocess.call([ipstr], shell = True)
             subprocess.call(['service iptables save'], shell = True)
 
     def cleanIptables(self):
-        print('in cleanIptables\n')
+        #print('in cleanIptables\n')
         for rule in self.myruleList:
             #替换-A -I
             rule << 2
