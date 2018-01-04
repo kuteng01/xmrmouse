@@ -136,6 +136,7 @@ class tcpproxy(object):
                             #print "clean_outstream clean remote list failed:", repr(e)
                             self.remotelist.pop(item)
         except  Exception as e:
+            print "error:"
             #print 'clean_outstream clean item  failed.:', repr(e)
 
 
