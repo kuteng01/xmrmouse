@@ -117,6 +117,7 @@ class tcpproxy(object):
                         #print "clean_proxy_chain clean server list failed:", repr(e)
                         self.servlist.pop(item)
         except   Exception as e:
+            print "error"
             #print "clean_proxy_chain clean item  failed.:", repr(e)
 
 
